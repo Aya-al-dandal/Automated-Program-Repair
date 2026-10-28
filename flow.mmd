@@ -1,0 +1,21 @@
+flowchart TD
+  A["1. User submits Python code<br/>(snippet or file)"] --> B{"2. Code parses?<br/>(syntax check)"}
+  B -- "No" --> R1["Report syntax error<br/>and ask for correction"]
+  B -- "Yes" --> C["3. Static analysis<br/>(lint, types, security, AST)"]
+  C --> D["4. Fault localisation<br/>(rank suspicious locations)"]
+  D --> E{"Actionable defect<br/>found?"}
+  E -- "No" --> R2["Report: no defect<br/>identified by the system"]
+  E -- "Yes" --> F["7. Generate unit tests<br/>(expected and edge cases)"]
+  F --> G["8a. Run tests on original code<br/>in sandbox (baseline)"]
+  G --> H["5-6. LLM explains the defect and<br/>proposes a candidate patch"]
+  H --> I["Apply patch to a copy;<br/>syntax and static re-check"]
+  I --> J["8b. Run tests on patched code<br/>(repeat runs to detect flakiness)"]
+  J --> K["9. Compare with baseline<br/>and any existing tests"]
+  K --> L{"Validation<br/>passed?"}
+  L -- "Yes" --> M["10. Present original, patch, tests<br/>and results with verdict:<br/>plausible, not proven correct"]
+  L -- "No" --> N{"Attempts left?"}
+  N -- "Yes" --> P["Feed failing output<br/>back to the LLM"]
+  P -.-> H
+  N -- "No" --> Q["Reject patch or<br/>request human review"]
+  M --> U["User reviews and decides<br/>(accept or reject)"]
+  Q --> U
